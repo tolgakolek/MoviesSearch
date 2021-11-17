@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">My Movies Search</string>
+    <string name="search_edittext_placeholder">Movie Name</string>
+    <string name="search_button_search">Search</string>
+    <string name="not_found_movie">The movie you were looking for was not found.</string>
+    <string name="search_textview_warning">Please search by movie name.</string>
+    <string name="detail_imgscore_desc">IMDB Score</string>
+    <string name="imgposter_desc">Movie Poster</string>
+</resources>
