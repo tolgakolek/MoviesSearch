@@ -1,12 +1,15 @@
 package com.tolgakolek.mymovies.ui.moviesearch
 
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.tolgakolek.mymovies.R
 import com.tolgakolek.mymovies.data.model.SearchResult
+import com.tolgakolek.mymovies.databinding.FragmentMovieDetailsBinding
 import com.tolgakolek.mymovies.databinding.FragmentMovieSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -22,7 +26,7 @@ import kotlinx.coroutines.flow.collect
 @AndroidEntryPoint
 class MovieSearchFragment : Fragment(), MovieSearchAdapter.MovieItemListener {
 
-    private val binding: FragmentMovieSearchBinding by viewBinding()
+    private lateinit var dataBinding: FragmentMovieSearchBinding
     private val movieSearchAdapter: MovieSearchAdapter by lazy { MovieSearchAdapter(this) }
     private val viewModel: MovieSearchViewModel by viewModels()
     private var isLoading = false
@@ -32,20 +36,22 @@ class MovieSearchFragment : Fragment(), MovieSearchAdapter.MovieItemListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dataBinding = DataBindingUtil.setContentView(requireActivity(),R.layout.fragment_movie_search)
         val activityBar = (activity as AppCompatActivity).supportActionBar
         activityBar?.setDisplayHomeAsUpEnabled(false)
         activityBar?.setTitle("Movie Search")
         setupRecyclerView()
-        setupSearchButton()
+        setupButton()
         lifecycleScope.launchWhenResumed {
             viewModel.viewState.collect {
                 isLoadData = it.isLoadData
+                it.movieTitle?.let { dataBinding.edSearch.hint = it }
                 it.moviesSearch?.let {
                     totalResults = it.totalResults
                     it.search?.let {
                         setAdapterItems(it)
                     } ?: kotlin.run {
-                        binding.apply {
+                        dataBinding.apply {
                             lottieAnimation.visibility = View.GONE
                             tvWarning.apply {
                                 text = resources.getString(R.string.not_found_movie)
@@ -65,35 +71,45 @@ class MovieSearchFragment : Fragment(), MovieSearchAdapter.MovieItemListener {
             } else {
                 movieSearchAdapter.setItems(newMovies)
             }
-            binding.apply {
-                lottieAnimation.visibility = View.GONE
-                progressBar.visibility = View.GONE
-            }
         }
-        binding.tvWarning.visibility = View.GONE
+        dataBinding.apply {
+            lottieAnimation.visibility = View.GONE
+            progressBar.visibility = View.GONE
+            tvWarning.visibility = View.GONE
+        }
         movies = newMovies
     }
 
     private fun setupRecyclerView() {
-        binding.recyclerView.apply {
+        dataBinding.recyclerView.apply {
             adapter = movieSearchAdapter
             layoutManager = LinearLayoutManager(requireContext())
             addOnScrollListener(recyclerViewScrollListener())
         }
     }
 
-    private fun setupSearchButton() {
-        binding.btnSearch.setOnClickListener {
-            isLoading = false
-            viewModel.getMoviesSearch(binding.editTextTextPersonName.text.toString())
-            binding.tvWarning.visibility = View.GONE
-            binding.lottieAnimation.visibility = View.VISIBLE
+    private fun setupButton() {
+        dataBinding.btnSearch.setOnClickListener {
+            searchMovie(dataBinding.edSearch.text.toString())
         }
+        dataBinding.edSearch.setOnEditorActionListener( object : TextView.OnEditorActionListener {
+            override fun onEditorAction(textView: TextView?, p1: Int, p2: KeyEvent?): Boolean {
+                searchMovie(textView?.text.toString())
+                return false
+            }
+        })
+    }
+
+    private fun searchMovie(title : String){
+        isLoading = false
+        viewModel.getMoviesSearch(title)
+        dataBinding.tvWarning.visibility = View.GONE
+        dataBinding.lottieAnimation.visibility = View.VISIBLE
     }
 
     private fun getMoreMovies() {
         isLoading = true
-        binding.progressBar.visibility = View.VISIBLE
+        dataBinding.progressBar.visibility = View.VISIBLE
         viewModel.getMoreMovies()
     }
 

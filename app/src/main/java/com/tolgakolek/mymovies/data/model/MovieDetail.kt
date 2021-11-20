@@ -30,5 +30,5 @@ data class MovieDetail(
     var year: String,
 
     @field:Json(name = "Title")
-    var title: String
+    var name: String
 )

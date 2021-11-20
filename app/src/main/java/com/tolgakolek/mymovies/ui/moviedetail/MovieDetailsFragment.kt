@@ -5,12 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.BindingAdapter
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import by.kirich1409.viewbindingdelegate.viewBinding
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.tolgakolek.mymovies.R
 import com.tolgakolek.mymovies.data.model.MovieDetail
 import com.tolgakolek.mymovies.databinding.FragmentMovieDetailsBinding
@@ -20,11 +24,11 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MovieDetailsFragment : Fragment() {
-    private val binding: FragmentMovieDetailsBinding by viewBinding()
     private val viewModel: MovieDetailViewModel by viewModels()
-
+    private lateinit var dataBinding: FragmentMovieDetailsBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dataBinding = DataBindingUtil.setContentView(requireActivity(),R.layout.fragment_movie_details)
         val activityBar = (activity as AppCompatActivity).supportActionBar
         arguments?.getString("id")?.let { viewModel.getMovieDetail(it) }
         lifecycleScope.launch {
@@ -39,22 +43,8 @@ class MovieDetailsFragment : Fragment() {
     }
 
     private fun bindMovieDetail(movieDetail: MovieDetail) {
-        binding.apply {
-            lottieAnimation.visibility = View.GONE
-            tvMovieName.text = movieDetail.title
-            tvMovieActors.text = movieDetail.actors
-            tvMovieDescription.text = movieDetail.plot
-            tvMovieDuration.text = movieDetail.runtime
-            tvMovieReleased.text = movieDetail.released
-            tvMovieScore.text = movieDetail.imdbRating
-            tvMovieType.text = movieDetail.genre
-            Glide.with(binding.root)
-                .load(movieDetail.poster)
-                .thumbnail(0.5f)
-                .placeholder(R.drawable.placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(binding.imgPoster)
-        }
+        dataBinding.movieDetail = movieDetail
+        dataBinding.lottieAnimation.visibility = View.GONE
     }
 
     override fun onCreateView(
@@ -63,5 +53,16 @@ class MovieDetailsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_movie_details, container, false)
+    }
+}
+@BindingAdapter("loadImage")
+fun ImageView.loadImage(url: String?) {
+    if (!url.isNullOrEmpty()) {
+        Glide.with(this.context)
+            .load(url)
+            .thumbnail(0.5f)
+            .placeholder(R.drawable.placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(this)
     }
 }

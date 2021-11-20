@@ -1,146 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black_background"
-    android:backgroundTintMode="add"
-    tools:context=".ui.moviedetail.MovieDetailsFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/imgPoster"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.4"
-        android:scaleType="fitStart"
-        android:contentDescription="@string/imgposter_desc"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars" />
+    <data>
+        <variable
+            name="movieDetail"
+            type="com.tolgakolek.mymovies.data.model.MovieDetail" />
+    </data>
 
-    <ImageView
-        android:id="@+id/imgImbdScore"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_weight="0.5"
-        android:contentDescription="@string/detail_imgscore_desc"
-        android:background="@drawable/ic_baseline_star_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
-        android:id="@+id/scrollView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/red_border_corners"
-        android:backgroundTint="@color/gray_dark"
-        android:backgroundTintMode="add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="350dp"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <LinearLayout
-            android:id="@+id/linearLayoutDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:orientation="vertical"
-            android:weightSum="1">
-
-            <TextView
-                android:id="@+id/tvMovieName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="0.2"
-                android:fontFamily="sans-serif-black"
-                android:gravity="center"
-                android:textColor="@color/white_dark" />
-
-            <TextView
-                android:id="@+id/tvMovieType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="0.1"
-                android:fontFamily="sans-serif-black"
-                android:gravity="center"
-                android:textColor="@color/white_dark" />
-
-            <TextView
-                android:id="@+id/tvMovieReleased"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="0.1"
-                android:fontFamily="sans-serif-black"
-                android:gravity="center"
-                android:textColor="@color/white_dark" />
-
-            <TextView
-                android:id="@+id/tvMovieDuration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_weight="0.1"
-                android:fontFamily="sans-serif-black"
-                android:gravity="center"
-                android:textColor="@color/white_dark" />
-
-            <TextView
-                android:id="@+id/tvMovieActors"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="5dp"
-                android:layout_weight="0.1"
-                android:fontFamily="sans-serif-black"
-                android:gravity="center"
-                android:textColor="@color/white_dark" />
-
-            <TextView
-                android:id="@+id/tvMovieDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="0.4"
-                android:fontFamily="sans-serif-black"
-                android:gravity="center"
-                android:textColor="@color/white_dark" />
-        </LinearLayout>
-    </ScrollView>
-
-    <TextView
-        android:id="@+id/tvMovieScore"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fontFamily="sans-serif-black"
-        android:gravity="center"
-        android:textColor="@color/white_dark"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imgImbdScore"
-        app:layout_constraintEnd_toEndOf="@+id/imgImbdScore"
-        app:layout_constraintStart_toStartOf="@+id/imgImbdScore"
-        app:layout_constraintTop_toTopOf="@+id/imgImbdScore" />
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottieAnimation"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black_background"
-        android:foregroundGravity="center"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/movie_loading" />
+        android:backgroundTintMode="add"
+        tools:context=".ui.moviedetail.MovieDetailsFragment">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/imgPoster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:contentDescription="@string/imgposter_desc"
+            android:scaleType="fitStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            loadImage="@{movieDetail.poster}" />
+
+        <ImageView
+            android:id="@+id/imgImbdScore"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_weight="0.5"
+            android:background="@drawable/ic_baseline_star_24"
+            android:contentDescription="@string/detail_imgscore_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/red_border_corners"
+            android:backgroundTint="@color/gray_dark"
+            android:backgroundTintMode="add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="350dp"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/tvMovieName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.2"
+                    android:text="@{movieDetail.name}"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textColor="@color/white_dark" />
+
+                <TextView
+                    android:id="@+id/tvMovieGenre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.1"
+                    android:text="@{movieDetail.genre}"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textColor="@color/white_dark" />
+
+                <TextView
+                    android:id="@+id/tvMovieReleased"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.1"
+                    android:text="@{movieDetail.released}"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textColor="@color/white_dark" />
+
+                <TextView
+                    android:id="@+id/tvMovieRuntime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="0.1"
+                    android:text="@{movieDetail.runtime}"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textColor="@color/white_dark" />
+
+                <TextView
+                    android:id="@+id/tvMovieActors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="0.1"
+                    android:text="@{movieDetail.actors}"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textColor="@color/white_dark" />
+
+                <TextView
+                    android:id="@+id/tvMoviePlot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="0.4"
+                    android:text="@{movieDetail.plot}"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textColor="@color/white_dark" />
+            </LinearLayout>
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/tvMovieImdbRating"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:textColor="@color/white_dark"
+            android:textSize="15sp"
+            android:text="@{movieDetail.imdbRating}"
+            app:layout_constraintBottom_toBottomOf="@+id/imgImbdScore"
+            app:layout_constraintEnd_toEndOf="@+id/imgImbdScore"
+            app:layout_constraintStart_toStartOf="@+id/imgImbdScore"
+            app:layout_constraintTop_toTopOf="@+id/imgImbdScore" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black_background"
+            android:foregroundGravity="center"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/movie_loading" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
