@@ -1,12 +1,10 @@
 package com.tolgakolek.mymovies.ui.moviesearch
 
 import android.os.Bundle
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
@@ -15,11 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.tolgakolek.mymovies.R
 import com.tolgakolek.mymovies.data.model.SearchResult
-import com.tolgakolek.mymovies.databinding.FragmentMovieDetailsBinding
 import com.tolgakolek.mymovies.databinding.FragmentMovieSearchBinding
+import com.tolgakolek.mymovies.util.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -30,24 +27,24 @@ class MovieSearchFragment : Fragment(), MovieSearchAdapter.MovieItemListener {
     private val movieSearchAdapter: MovieSearchAdapter by lazy { MovieSearchAdapter(this) }
     private val viewModel: MovieSearchViewModel by viewModels()
     private var isLoading = false
-    private var isLoadData = false
-    private var totalResults = 0
-    private var movies: List<SearchResult.Movie>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dataBinding = DataBindingUtil.setContentView(requireActivity(),R.layout.fragment_movie_search)
+        dataBinding =
+            DataBindingUtil.setContentView(requireActivity(), R.layout.fragment_movie_search)
         val activityBar = (activity as AppCompatActivity).supportActionBar
         activityBar?.setDisplayHomeAsUpEnabled(false)
         activityBar?.setTitle("Movie Search")
         setupRecyclerView()
         setupButton()
+        getViewModelData()
+    }
+
+    private fun getViewModelData() {
         lifecycleScope.launchWhenResumed {
             viewModel.viewState.collect {
-                isLoadData = it.isLoadData
                 it.movieTitle?.let { dataBinding.edSearch.hint = it }
                 it.moviesSearch?.let {
-                    totalResults = it.totalResults
                     it.search?.let {
                         setAdapterItems(it)
                     } ?: kotlin.run {
@@ -65,19 +62,12 @@ class MovieSearchFragment : Fragment(), MovieSearchAdapter.MovieItemListener {
     }
 
     private fun setAdapterItems(newMovies: List<SearchResult.Movie>) {
-        if (isLoadData && movies != newMovies) {
-            if (isLoading) {
-                movieSearchAdapter.setMoreMovies(newMovies)
-            } else {
-                movieSearchAdapter.setItems(newMovies)
-            }
-        }
+        movieSearchAdapter.setItems(newMovies,viewModel.viewState.value.isLoadData)
         dataBinding.apply {
             lottieAnimation.visibility = View.GONE
-            progressBar.visibility = View.GONE
             tvWarning.visibility = View.GONE
         }
-        movies = newMovies
+        isLoading = false
     }
 
     private fun setupRecyclerView() {
@@ -91,25 +81,21 @@ class MovieSearchFragment : Fragment(), MovieSearchAdapter.MovieItemListener {
     private fun setupButton() {
         dataBinding.btnSearch.setOnClickListener {
             searchMovie(dataBinding.edSearch.text.toString())
+            it.hideKeyboard()
         }
-        dataBinding.edSearch.setOnEditorActionListener( object : TextView.OnEditorActionListener {
-            override fun onEditorAction(textView: TextView?, p1: Int, p2: KeyEvent?): Boolean {
-                searchMovie(textView?.text.toString())
-                return false
-            }
-        })
+        dataBinding.edSearch.setOnEditorActionListener { textView, p1, p2 ->
+            searchMovie(textView?.text.toString())
+            textView?.hideKeyboard()
+            false
+        }
     }
 
-    private fun searchMovie(title : String){
-        isLoading = false
+    private fun searchMovie(title: String) {
         viewModel.getMoviesSearch(title)
-        dataBinding.tvWarning.visibility = View.GONE
         dataBinding.lottieAnimation.visibility = View.VISIBLE
     }
 
     private fun getMoreMovies() {
-        isLoading = true
-        dataBinding.progressBar.visibility = View.VISIBLE
         viewModel.getMoreMovies()
     }
 
@@ -117,22 +103,26 @@ class MovieSearchFragment : Fragment(), MovieSearchAdapter.MovieItemListener {
         return object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (newState > 0) {
+                if (newState > RecyclerView.SCROLL_STATE_IDLE) {
                     isLoading = true
                 }
             }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (dy > 0) {
+                if (dy > RecyclerView.SCROLL_STATE_IDLE) {
                     val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val visibleItemCount = layoutManager.childCount
                     val totalItemCount = layoutManager.itemCount
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                    if (isLoading && totalItemCount < totalResults && isLoadData) {
-                        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
-                            getMoreMovies()
-                        }
+                    var totalResult = 0
+                    viewModel.viewState.value.moviesSearch?.totalResults?.let {
+                        totalResult = it
+                    }
+                    if (isLoading && totalItemCount < totalResult && viewModel.viewState.value.isLoadData
+                        && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                    ) {
+                        getMoreMovies()
                     }
                 }
             }

@@ -11,13 +11,12 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.tolgakolek.mymovies.R
 import com.tolgakolek.mymovies.data.model.MovieDetail
 import com.tolgakolek.mymovies.databinding.FragmentMovieDetailsBinding
+import com.tolgakolek.mymovies.ui.moviedetail.MovieDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -55,6 +54,7 @@ class MovieDetailsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_movie_details, container, false)
     }
 }
+
 @BindingAdapter("loadImage")
 fun ImageView.loadImage(url: String?) {
     if (!url.isNullOrEmpty()) {

@@ -64,16 +64,7 @@
                 android:layoutAnimation="@anim/layout_animator"
                 android:layout_weight="0.9" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="0.1"
-                android:indeterminate="true"
-                android:indeterminateTint="@color/red_dark"
-                android:indeterminateTintMode="src_atop"
-                android:visibility="gone" />
+
 
         </LinearLayout>
 

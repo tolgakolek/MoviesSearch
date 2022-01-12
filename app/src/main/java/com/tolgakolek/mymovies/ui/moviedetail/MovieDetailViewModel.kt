@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tolgakolek.mymovies.data.model.MovieDetail
+import com.tolgakolek.mymovies.data.model.MovieDetailUiState
 import com.tolgakolek.mymovies.data.remote.source.MovieRemoteDataSource
 import com.tolgakolek.mymovies.util.AppConstant
 import com.tolgakolek.mymovies.util.DataState
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor(private val movieRemoteDataSource: MovieRemoteDataSource) :
     ViewModel() {
-    private val _viewState = MutableStateFlow(initialCreateViewState())
+    private val _viewState = MutableStateFlow(MovieDetailUiState())
     val viewState = _viewState.asStateFlow()
 
     fun getMovieDetail(imdbId: String) {
@@ -35,12 +36,4 @@ class MovieDetailViewModel @Inject constructor(private val movieRemoteDataSource
             }
         }
     }
-
-    private fun initialCreateViewState() = MovieDetailState(
-        movie = null
-    )
 }
-
-data class MovieDetailState(
-    val movie: MovieDetail? = null
-)
